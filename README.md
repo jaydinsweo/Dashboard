@@ -6,26 +6,13 @@ Dashboard with Qlik Engine
 
 ## Table of Contents
 
--  [About the Project](#about-the-project)
-   -  [Built With](#built-with)
 -  [Getting Started](#getting-started)
    -  [Prerequisites](#prerequisites)
+   -  [Built With](#built-with)
 -  [Guide](#Guide)
-   -  [Initialise Project](#initialise-project)
+   -  [1. Initialise Project](#initialise-project)
       -  [Installation](#installation)
       -  [Remove Unwanted Files](#remove-unwanted-files)
-
-## About the Project
-
-This project details everything you need to know to create a mashup with Qlik.
-
-### Built With
-
-This section should list any major frameworks that you built your project using. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
-
--  [ReactJs]
--  [Qlik Engine]
--  [Styled Components]
 
 ## Getting Started
 
@@ -35,6 +22,15 @@ To run in local, following these steps.
 
 -  Qlik Server running on desktop or on server.
 -  Npm or yarn
+
+### Built With
+
+This section should list any major frameworks that you built your project using. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
+
+-  [ReactJs](https://github.com/facebook/react)
+-  [Enigma.js](https://github.com/qlik-oss/enigma.js)
+-  [Styled Components](https://github.com/styled-components/styled-components)
+-  [Resize Observer Polyfill](https://github.com/que-etc/resize-observer-polyfill)
 
 ## Guide
 
@@ -65,7 +61,8 @@ Delete unnecessary files in `/src` folder
 -  serviceWorker.js
 -  setupTest.js
 
-In our `index.css`, removes everything and replace with this [tailwind base.css](https://unpkg.com/tailwindcss@1.5.2/dist/base.css). It will make the style of our app consistent across different browser, you can have a read [here](https://tailwindcss.com/docs/preflight/#app).
+In our `index.css`, removes everything and replace with this [tailwind base.css](https://unpkg.com/tailwindcss@1.5.2/dist/base.css).
+It will make the style of our app consistent across different browser, you can have a read [here](https://tailwindcss.com/docs/preflight/#app).
 
 In our `index.js`
 
@@ -85,7 +82,7 @@ ReactDOM.render(
 
 and in our `App.js`
 
-```avascript
+```javascript
 import React from "react";
 
 const App = () => {
