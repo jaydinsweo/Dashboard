@@ -1,8 +1,56 @@
-Install
+<p align="center">
+Dashboard with Qlik Engine
+</p>
 
-```bash
-npx create-react-app dashboard // <- project folder name
+<!-- TABLE OF CONTENTS -->
+
+## Table of Contents
+
+-  [About the Project](#about-the-project)
+   -  [Built With](#built-with)
+-  [Getting Started](#getting-started)
+   -  [Prerequisites](#prerequisites)
+-  [Guide](#Guide)
+   -  [Installation](#installation)
+   -  [Remove Unwanted Files](#remove-unwanted-files)
+
+This project details everything you need to know to create a mashup with Qlik.
+
+### Built With
+
+This section should list any major frameworks that you built your project using. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
+
+-  [ReactJs]
+-  [Qlik Engine]
+-  [Styled Components]
+
+## Getting Started
+
+To run in local, following these steps.
+
+### Prerequisites
+
+-  Qlik Server running on desktop or on server.
+-  Npm or yarn
+
+## Guide
+
+This section will details on how to set up our mashup.
+
+### Installation
+
+```yarn
+npx create-react-app dashboard
+cd dashboard
+yarn add d3 enigma.js styled-components resize-observer-polyfill
 ```
+
+-  `d3` is our main data visualisation tool
+-  `enigma.js` is the qlik library for communicate with Qlik Engine
+-  `styled-components` css-in-js tool (optional)
+-  `resize-obserer-polyfill` make our chart responsive
+
+### Remove Unwanted Files
 
 Delete unnecessary files in `/src` folder
 
@@ -43,20 +91,3 @@ export default App;
 ```
 
 That is it!.
-
-Now let's install some dependencies to work with:
-
-```bash
-npm install d3 enigma.js styled-components resize-observer-polyfill
-```
-
-or
-
-```bash
-yarn add d3 enigma.js styled-components resize-observer-polyfill
-```
-
--  `d3` is our main data visualisation tool
--  `enigma.js` is the qlik library for communicate with Qlik Engine
--  `styled-components` css-in-js tool (optional)
--  `resize-obserer-polyfill` make our chart responsive
