@@ -11,8 +11,11 @@ Dashboard with Qlik Engine
 -  [Getting Started](#getting-started)
    -  [Prerequisites](#prerequisites)
 -  [Guide](#Guide)
-   -  [Installation](#installation)
-   -  [Remove Unwanted Files](#remove-unwanted-files)
+   -  [Initialise Project](#initialise-project)
+      -  [Installation](#installation)
+      -  [Remove Unwanted Files](#remove-unwanted-files)
+
+## About the Project
 
 This project details everything you need to know to create a mashup with Qlik.
 
@@ -37,7 +40,9 @@ To run in local, following these steps.
 
 This section will details on how to set up our mashup.
 
-### Installation
+### Initialise Project
+
+#### Installation
 
 ```yarn
 npx create-react-app dashboard
@@ -50,7 +55,7 @@ yarn add d3 enigma.js styled-components resize-observer-polyfill
 -  `styled-components` css-in-js tool (optional)
 -  `resize-obserer-polyfill` make our chart responsive
 
-### Remove Unwanted Files
+#### Remove Unwanted Files
 
 Delete unnecessary files in `/src` folder
 
