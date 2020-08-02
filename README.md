@@ -14,6 +14,7 @@ Dashboard with Qlik Engine
       -  [Installation](#installation)
       -  [Remove Unwanted Files](#remove-unwanted-files)
    -  [2. Qlik Connection](#qlik-connection)
+   -  [3. Dashboard Layout](#dashboard-layout)
 
 ## Getting Started
 
@@ -51,6 +52,17 @@ yarn add d3 enigma.js styled-components resize-observer-polyfill
 -  `enigma.js` is the qlik library for communicate with Qlik Engine
 -  `styled-components` css-in-js tool (optional)
 -  `resize-obserer-polyfill` make our chart responsive
+
+#### Project Layout
+
+```bash
+├─
+├─
+├─
+├─
+|
+└─
+```
 
 #### Remove Unwanted Files
 
@@ -271,4 +283,63 @@ ReactDOM.render(
    </React.StrictMode>,
    document.getElementById("root")
 );
+```
+
+### Dashboard Layout
+
+Before we going to qlik and d3, we need to do a quick session of our dashboard layout because it is important that we know what we need to do with our chart.
+
+Recommended: [flexbox](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout/Basic_Concepts_of_Flexbox)and [css grid](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Basic_Concepts_of_Grid_Layout).
+
+With these two tools, we can do pretty much everything from a simple centered columns to customise newspaper section, that fit in every screen size.
+
+Since our requirement is only 4 charts, it pretty easy just to use `flexbox` to divided our layout.
+
+```chart
+ [  ] [  ]       [ line ][pie]
+ [  ] [  ]  =>   [    bar    ]
+ [  ] [  ]       [   table   ]
+```
+
+```javascript
+const Layout = styled.div`
+   width: 50vw;
+   height: 100vh;
+   margin: 0 auto;
+   display: flex;
+   flex-wrap: wrap;
+   justify-content: center;
+   align-items: center;
+   .line {
+      flex: 1;
+   }
+   .pie {
+      flex: 0;
+   }
+   .bar {
+      flex-basis: 100%;
+   }
+   .table {
+      flex-basis: 100%;
+   }
+`;
+
+const Chart = styled.div`
+   margin: 0.5rem 1rem;
+   height: 270px;
+   min-width: 270px;
+`;
+```
+
+Now we can do a bit more styling to our layout.
+I'm using a new UI/UX trend - neomorphism. The color scheme is from [uxplanet.org](https://uxplanet.org/neumorphism-in-user-interface-tutorial-c353698ac5c0)
+
+```javascript
+const Chart = styled.div`
+   //...
+   border-radius: 0.5rem;
+   background: #e0e5ec;
+   border: 1px solid rgba(255, 255, 255, 0.1);
+   box-shadow: 10px 10px 15px #a3b1c6, -10px -10px 15px #fff;
+`;
 ```
