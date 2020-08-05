@@ -6,12 +6,9 @@ import App from "./App";
 
 ReactDOM.render(
    <React.StrictMode>
-      {/*
-     <AppProvider>
+      <AppProvider>
          <App />
       </AppProvider>
-      */}
-      <App />
    </React.StrictMode>,
    document.getElementById("root")
 );
