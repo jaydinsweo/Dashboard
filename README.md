@@ -15,6 +15,16 @@ Dashboard with Qlik Engine
       -  [Remove Unwanted Files](#remove-unwanted-files)
    -  [2. Qlik Connection](#qlik-connection)
    -  [3. Dashboard Layout](#dashboard-layout)
+   -  [4. Qlik Object](#qlik-object)
+      -  [Single Dimension and Single Measure](#single)
+      -  [Multi Dimensions and Sigle Measure](#multi-dims)
+      -  [Single Dimensions and Multi Measures](#multi-meas)
+      -  [Data](#data)
+   -  [5. Charts](#chart)
+      -  [Line Chart](#line-chart)
+      -  [Pie Chart](#pie-chart)
+      -  [Bar Chart](#bar-chart)
+      -  [Table](#table)
 
 ## Getting Started
 
@@ -343,3 +353,23 @@ const Chart = styled.div`
    box-shadow: 10px 10px 15px #a3b1c6, -10px -10px 15px #fff;
 `;
 ```
+
+### Qlik Object
+
+#### Single Dimension and Single Measure
+
+#### Multi Dimensions and Single Measure
+
+#### Single Dimension and Multi Measures
+
+#### Data
+
+### Chart
+
+#### Line Chart
+
+#### Pie Chart
+
+#### Bar Chart
+
+#### Table
