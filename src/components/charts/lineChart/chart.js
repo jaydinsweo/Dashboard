@@ -1,0 +1,250 @@
+import React, { useState, useEffect, useRef } from "react";
+import * as d3 from "d3";
+import useResizeObserver from "../../../hooks/useResizeObserver";
+import styled from "styled-components";
+
+//TODO:
+// button css doesn't work when clicked
+// passed the correct data when button clicked
+
+const Chart = ({ dataset }) => {
+   const svgRef = useRef();
+   const wrapperRef = useRef();
+   const dimensions = useResizeObserver(wrapperRef);
+
+   useEffect(() => {
+      if (!dimensions) return;
+
+      // separate data into gender
+      const maleTP = dataset.filter(d => d.dimensions[1].value === "M");
+      const femaleTP = dataset.filter(d => d.dimensions[1].value === "F");
+
+      //margin
+      const margin = {
+         top: 10,
+         bottom: 70,
+         left: 30,
+         right: 20
+      };
+
+      // set the initial svg element
+      const svg = d3
+         .select(svgRef.current)
+         .attr("width", dimensions.width)
+         .attr("height", dimensions.height);
+
+      // ---------------------- scale
+      const scale = {
+         x: d3
+            .scaleLinear()
+            .domain(d3.extent(dataset.map(d => d.dimensions[0].value)))
+            .range([margin.left, dimensions.width - margin.right]),
+
+         y: d3
+            .scaleLinear()
+            .domain(d3.extent(dataset.map(d => d.measures[0].value)))
+            .range([dimensions.height - margin.bottom, margin.top])
+            .nice()
+      };
+      // ----------------------- axis
+      const axis = {
+         x: g =>
+            g
+               .attr(
+                  "transform",
+                  `translate(0, ${dimensions.height - margin.bottom})`
+               )
+               .call(d3.axisBottom(scale.x)),
+         y: g =>
+            g
+               .attr("transform", `translate(${margin.left}, 0)`)
+               .call(d3.axisLeft(scale.y))
+      };
+
+      // ------ draw axis on the svg ---------
+      svg.select(".x-axis").call(axis.x);
+      svg.select(".y-axis").call(axis.y);
+
+      // remove all axes path and tick line
+      svg.select(".x-axis")
+         .select("path")
+         .remove();
+      svg.select(".y-axis")
+         .select("path")
+         .remove();
+      svg.selectAll(".tick")
+         .select("line")
+         .remove();
+
+      // text label for x axis
+
+      svg.selectAll(".text-label")
+         .data(["Age"])
+         .join("text")
+         .attr("class", "text-label")
+         .attr(
+            "transform",
+            `translate(${dimensions.width / 2}, ${dimensions.height -
+               margin.bottom +
+               25})`
+         )
+         .style("text-anchor", "middle")
+         .style("font-size", "0.6rem")
+         .text(d => d);
+
+      // add grid line in y axis
+      const yGrid = () => d3.axisLeft(scale.y).ticks(9);
+      svg.append("g")
+         .attr("class", "grid")
+         .attr("transform", `translate(${margin.left}, 0)`)
+         .style("stroke-dasharray", "3,3")
+         .style("opacity", 0.2)
+         .call(
+            yGrid()
+               .tickSize(-dimensions.width + margin.left + margin.right)
+               .tickFormat("")
+         )
+         .select("path")
+         .remove();
+
+      svg.selectAll("text").attr("opacity", 0.7);
+
+      // chart lines
+      const line = d3
+         .line()
+         .x(d => scale.x(d.dimensions[0].value))
+         .y(d => scale.y(d.measures[0].value))
+         .defined(d => d !== null)
+         .curve(d3.curveBasis);
+
+      svg.selectAll(".female-line")
+         .data([femaleTP])
+         .join("path")
+         .attr("class", "female-line")
+         .attr("d", line)
+         .attr("stroke", "red")
+         .attr("fill", "none")
+         .attr("stroke-width", 2)
+         .attr("opacity", 0.7);
+
+      svg.selectAll(".male-line")
+         .data([maleTP])
+         .join("path")
+         .attr("class", "male-line")
+         .attr("d", line)
+         .attr("stroke", "blue")
+         .attr("fill", "none")
+         .attr("stroke-width", 2)
+         .attr("opacity", 0.7);
+
+      var areaFunction = d3
+         .area()
+         .curve(d3.curveBasis)
+         .x(d => scale.x(d.dimensions[0].value))
+         .y0(dimensions.height - margin.bottom)
+         .y1(d => scale.y(d.measures[0].value));
+
+      var areaGradient = svg
+         .append("defs")
+         .append("linearGradient")
+         .attr("id", "areaGradient")
+         .attr("x1", "0%")
+         .attr("y1", "0%")
+         .attr("x2", "0%")
+         .attr("y2", "100%");
+
+      areaGradient
+         .append("stop")
+         .attr("offset", "50%")
+         .attr("stop-color", "#BEE3F8")
+         .attr("stop-opacity", 0.4);
+      areaGradient
+         .append("stop")
+         .attr("offset", "80%")
+         .attr("stop-color", "white")
+         .attr("stop-opacity", 0);
+
+      svg.selectAll(".female-area")
+         .data([femaleTP])
+         .join("path")
+         .attr("class", "female-area")
+         .attr("d", areaFunction)
+         .attr("fill", "url(#areaGradient)");
+
+      svg.selectAll(".male-area")
+         .data([maleTP])
+         .join("path")
+         .attr("class", "male-area")
+         .attr("d", areaFunction)
+         .attr("fill", "url(#areaGradient)");
+   }, [dataset, dimensions]);
+
+   // handling the dropdown box for the opacity of the line charts
+   useEffect(() => {
+      d3.select(".selectButton").on("change", function() {
+         const selectedOption = d3.select(this).property("value");
+         switch (selectedOption) {
+            case "female":
+               d3.select(".male-line").attr("opacity", 0.1);
+               d3.select(".female-line").attr("opacity", 1);
+               d3.select(".female-area").attr("opacity", 1);
+               d3.select(".male-area").attr("opacity", 0);
+               break;
+            case "male":
+               d3.select(".female-line").attr("opacity", 0.1);
+               d3.select(".male-line").attr("opacity", 1);
+               d3.select(".female-area").attr("opacity", 0);
+               d3.select(".male-area").attr("opacity", 1);
+               break;
+            default:
+               d3.select(".female-line").attr("opacity", 1);
+               d3.select(".male-line").attr("opacity", 1);
+               d3.select(".female-area").attr("opacity", 0.5);
+               d3.select(".male-area").attr("opacity", 0.5);
+               break;
+         }
+      });
+   }, [dataset]);
+   return (
+      <div ref={wrapperRef} style={{ height: "100%" }}>
+         <Header>
+            <Button>All</Button>
+            <Button>Male</Button>
+            <Button>Female</Button>
+         </Header>
+
+         <svg ref={svgRef}>
+            <g className="x-axis" />
+            <g className="y-axis" />
+         </svg>
+      </div>
+   );
+};
+
+export default Chart;
+
+const Header = styled.div`
+   display: flex;
+   justify-content: end;
+   margin: 0.5rem 0.5rem 0 0.25rem;
+   p {
+      font-size: 2vmin;
+      opacity: 0.8;
+   }
+`;
+
+const Button = styled.button`
+   padding: 0 0.5rem;
+   margin: 0.2rem 0.5rem 0;
+   box-shadow: -5px -5px 20px #fff, 5px 5px 20px #babecc;
+   color: #61677c;
+   transition: all 0.2s ease-in-out;
+   cursor: pointer;
+   border-radius: 4px;
+   &:hover {
+      box-shadow: -2px -2px 5px #fff, 2px 2px 5px #babecc;
+   }
+   &:active {
+      box-shadow: inset 1px 1px 2px #babecc, inset -1px -1px 2px #fff;
+   }
+`;
