@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import useResizeObserver from "../../../hooks/useResizeObserver";
+import styled from "styled-components";
 
 const Chart = ({ dataset }) => {
    const wrapperRef = useRef();
@@ -10,8 +11,8 @@ const Chart = ({ dataset }) => {
    useEffect(() => {
       if (!dimensions) return;
       const margin = {
-         top: 50,
-         bottom: 30,
+         top: 40,
+         bottom: 50,
          left: 30,
          right: 30
       };
@@ -69,11 +70,13 @@ const Chart = ({ dataset }) => {
          .range([0, scale.x.bandwidth()])
          .padding(0.05);
 
+      const colors = ["#4281A4", "#48A9A6", "#DB5461", "#E9D985", "#C0DF85"];
+
       // color palette = one color per subgroup
       var color = d3
          .scaleOrdinal()
          .domain(keys)
-         .range(["#e41a1c", "#377eb8", "#4daf4a"]);
+         .range(colors);
 
       // draw chart
 
@@ -98,17 +101,59 @@ const Chart = ({ dataset }) => {
          )
          .attr("fill", d => color(d.key));
 
-      // -------------------------------------- experiemnt
+      // -------------------------------------- label
+
+      const gLegend = d3
+         .select(wrapperRef.current)
+         .select(".bar-legend")
+         .selectAll(".legend")
+         .data(dataset[0].measures)
+         .join("g")
+         .attr("class", "legend");
+
+      gLegend.text(d => d.label);
+      gLegend
+         .append("div")
+         .attr("class", "circle")
+         .attr("style", (_, i) => `background-color: ${colors[i]};`);
    }, [dataset, dimensions]);
 
    return (
-      <div ref={wrapperRef} style={{ height: "100%" }}>
+      <Div ref={wrapperRef}>
          <svg ref={svgRef}>
             <g className="x-axis" />
             <g className="y-axis" />
          </svg>
-      </div>
+         <Legends className="bar-legend" />
+      </Div>
    );
 };
 
 export default Chart;
+
+const Div = styled.div`
+   height: 100%;
+   display: flex;
+   flex-direction: column;
+`;
+
+const Legends = styled.div`
+   display: flex;
+   justify-content: space-evenly;
+   height: 2rem;
+
+   .legend {
+      display: flex;
+      align-items: center;
+      flex-direction: row-reverse;
+      font-size: 0.75rem;
+
+      .circle {
+         width: 1rem;
+         height: 1rem;
+         margin: 0 0.5rem;
+         border-radius: 50%;
+         box-shadow: 4px 4px 5px #a3b1c6, -4px -4px 5px #fff;
+      }
+   }
+`;

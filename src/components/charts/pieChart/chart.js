@@ -15,7 +15,7 @@ const Chart = ({ dataset }) => {
          .attr("width", dimensions.width)
          .attr("height", dimensions.height);
 
-      const color = ["#264653", "#2a9d8f", "#e9c46a", "#e76f51"];
+      const colors = ["#4281A4", "#48A9A6", "#DB5461", "#E9D985", "#C0DF85"];
       const radius = Math.min(dimensions.width, dimensions.height) / 2;
 
       const pie = d3.pie().value(d => d.measures[0].value);
@@ -34,7 +34,7 @@ const Chart = ({ dataset }) => {
             `translate(${dimensions.width / 2}, ${dimensions.height / 2})`
          )
          .attr("d", arc)
-         .attr("fill", (_, i) => color[i])
+         .attr("fill", (_, i) => colors[i])
          .attr("stroke", "#e6e9ef")
          .style("stroke-width", 1.2);
 
@@ -42,7 +42,7 @@ const Chart = ({ dataset }) => {
 
       svg.selectAll(".piechart")
          .on("mouseover", d => {
-            d3.select(".innerCircle").attr("style", "opacity: 1");
+            // d3.select(".innerCircle").attr("style", "opacity: 1");
             svg.select(".labels")
                .attr(
                   "transform",
@@ -88,7 +88,6 @@ const Div = styled.div`
 
 const InnerCircle = styled.div`
    position: absolute;
-   opacity: 0;
    width: 120px;
    height: 120px;
    border-radius: 50%;

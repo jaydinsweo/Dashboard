@@ -36,18 +36,18 @@ const TableData = ({ dataset }) => {
 export default TableData;
 
 const Div = styled.div`
-   width: 100%;
    height: 100%;
    overflow-y: scroll;
    box-sizing: border-box;
 `;
 const Table = styled.table`
+   width: 100%;
    font-size: 2vmin;
    border: 1px solid black;
 `;
 
 const Thead = styled.thead`
-   background-color: #a0aec0;
+   background-color: #4281a4;
    border: 1px solid black;
 
    th {

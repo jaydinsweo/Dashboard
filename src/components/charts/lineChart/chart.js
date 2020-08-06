@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import useResizeObserver from "../../../hooks/useResizeObserver";
 import styled from "styled-components";
@@ -109,6 +109,7 @@ const Chart = ({ dataset }) => {
 
       svg.selectAll("text").attr("opacity", 0.7);
 
+      const colors = ["#4281A4", "#48A9A6", "#DB5461", "#E9D985", "#C0DF85"];
       // chart lines
       const line = d3
          .line()
@@ -122,20 +123,20 @@ const Chart = ({ dataset }) => {
          .join("path")
          .attr("class", "female-line")
          .attr("d", line)
-         .attr("stroke", "red")
+         .attr("stroke", colors[0])
          .attr("fill", "none")
          .attr("stroke-width", 2)
-         .attr("opacity", 0.7);
+         .attr("opacity", 0.8);
 
       svg.selectAll(".male-line")
          .data([maleTP])
          .join("path")
          .attr("class", "male-line")
          .attr("d", line)
-         .attr("stroke", "blue")
+         .attr("stroke", colors[2])
          .attr("fill", "none")
          .attr("stroke-width", 2)
-         .attr("opacity", 0.7);
+         .attr("opacity", 0.8);
 
       var areaFunction = d3
          .area()
@@ -156,7 +157,7 @@ const Chart = ({ dataset }) => {
       areaGradient
          .append("stop")
          .attr("offset", "50%")
-         .attr("stop-color", "#BEE3F8")
+         .attr("stop-color", colors[1])
          .attr("stop-opacity", 0.4);
       areaGradient
          .append("stop")
@@ -180,37 +181,35 @@ const Chart = ({ dataset }) => {
    }, [dataset, dimensions]);
 
    // handling the dropdown box for the opacity of the line charts
-   useEffect(() => {
-      d3.select(".selectButton").on("change", function() {
-         const selectedOption = d3.select(this).property("value");
-         switch (selectedOption) {
-            case "female":
-               d3.select(".male-line").attr("opacity", 0.1);
-               d3.select(".female-line").attr("opacity", 1);
-               d3.select(".female-area").attr("opacity", 1);
-               d3.select(".male-area").attr("opacity", 0);
-               break;
-            case "male":
-               d3.select(".female-line").attr("opacity", 0.1);
-               d3.select(".male-line").attr("opacity", 1);
-               d3.select(".female-area").attr("opacity", 0);
-               d3.select(".male-area").attr("opacity", 1);
-               break;
-            default:
-               d3.select(".female-line").attr("opacity", 1);
-               d3.select(".male-line").attr("opacity", 1);
-               d3.select(".female-area").attr("opacity", 0.5);
-               d3.select(".male-area").attr("opacity", 0.5);
-               break;
-         }
-      });
-   }, [dataset]);
+   const handleClick = value => {
+      switch (value) {
+         case "female":
+            d3.select(".male-line").attr("opacity", 0.1);
+            d3.select(".female-line").attr("opacity", 1);
+            d3.select(".female-area").attr("opacity", 1);
+            d3.select(".male-area").attr("opacity", 0);
+            break;
+         case "male":
+            d3.select(".female-line").attr("opacity", 0.1);
+            d3.select(".male-line").attr("opacity", 1);
+            d3.select(".female-area").attr("opacity", 0);
+            d3.select(".male-area").attr("opacity", 1);
+            break;
+         default:
+            d3.select(".female-line").attr("opacity", 1);
+            d3.select(".male-line").attr("opacity", 1);
+            d3.select(".female-area").attr("opacity", 0.5);
+            d3.select(".male-area").attr("opacity", 0.5);
+            break;
+      }
+   };
+
    return (
       <div ref={wrapperRef} style={{ height: "100%" }}>
          <Header>
-            <Button>All</Button>
-            <Button>Male</Button>
-            <Button>Female</Button>
+            <Button onClick={() => handleClick("all")}>All</Button>
+            <Button onClick={() => handleClick("male")}>Male</Button>
+            <Button onClick={() => handleClick("female")}>Female</Button>
          </Header>
 
          <svg ref={svgRef}>
@@ -236,15 +235,15 @@ const Header = styled.div`
 const Button = styled.button`
    padding: 0 0.5rem;
    margin: 0.2rem 0.5rem 0;
-   box-shadow: -5px -5px 20px #fff, 5px 5px 20px #babecc;
+   box-shadow: -5px -5px 10px #fff, 5px 5px 10px #babecc;
    color: #61677c;
    transition: all 0.2s ease-in-out;
    cursor: pointer;
    border-radius: 4px;
    &:hover {
-      box-shadow: -2px -2px 5px #fff, 2px 2px 5px #babecc;
+      box-shadow: -2px -2px 6px #fff, 2px 2px 6px #babecc;
    }
    &:active {
-      box-shadow: inset 1px 1px 2px #babecc, inset -1px -1px 2px #fff;
+      box-shadow: inset 1px 1px 3px #babecc, inset -1px -1px 3px #fff;
    }
 `;
