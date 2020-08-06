@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { AppContext } from "../enigma/AppProvider";
+
 const useGetSessionObject = definition => {
    const [data, setData] = useState();
    const app = useContext(AppContext);
