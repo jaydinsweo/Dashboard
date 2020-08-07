@@ -360,7 +360,7 @@ Let's create a folder called `hooks` inside of `src` folder to contains our cust
 
 In order to extract the data from qlik, we need to get the `objectId` of the chart that we need to extract from. In order to do that, on your qlik server (localhost:4848), on the chart of the app that we specified in our `.env` file - you can right click on the chart and select `Embed Chart`.
 
-![Get ObjectId From Qlik](./.github/images/2020-08-07 09.07.39.gif)
+![Get ObjectId From Qlik](https://github.com/jaynguyens/Dashboard/blob/master/.github/images/2020-08-07%2009.07.39.gif)
 
 `useGetModelLayout.js`
 
