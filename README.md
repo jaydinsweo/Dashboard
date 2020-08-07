@@ -303,7 +303,7 @@ Recommended: [flexbox](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flex
 
 With these two tools, we can do pretty much everything from a simple centered columns to customise newspaper section, that fit in every screen size.
 
-Since our requirement is only 4 charts, it pretty easy just to use `flexbox` to divided our layout.
+Since our dashboard has 4 charts, it pretty easy just to use `flexbox` to divided our layout.
 
 ```chart
  [  ] [  ]       [ line ][pie]
@@ -356,6 +356,16 @@ const Chart = styled.div`
 
 ### Qlik Object
 
+Let's create a folder called `hooks` inside of `src` folder to contains our custom hooks.
+
+In order to extract the data from qlik, we need to get the `objectId` of the chart that we need to extract from. In order to do that, on your qlik server (localhost:4848), on the chart of the app that we specified in our `.env` file - you can right click on the chart and select `Embed Chart`.
+
+![](./.github/images/2020-08-07 09.07.39.gif)
+
+`useGetModelLayout.js`
+
+Let's create a file called `useGetModelLayout.js` in `src/hooks/` folder.
+
 #### Single Dimension and Single Measure
 
 #### Multi Dimensions and Single Measure
@@ -365,6 +375,8 @@ const Chart = styled.div`
 #### Data
 
 ### Chart
+
+Now we have the data in a form that we could work with.
 
 #### Line Chart
 
