@@ -4,7 +4,7 @@ import extractData from "../helper/extractData";
 // the parameter object contains the model and layout of a chart from qlik
 // extract the data into a single format for d3 using extractData function
 
-const useGetDataFromModel = object => {
+const useGetDataFromLayout = object => {
    const [data, setData] = useState();
 
    useEffect(() => {
@@ -24,4 +24,4 @@ const useGetDataFromModel = object => {
 
    return data;
 };
-export default useGetDataFromModel;
+export default useGetDataFromLayout;

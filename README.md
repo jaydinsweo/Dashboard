@@ -397,11 +397,62 @@ Without going in-depth or a specific case, `model` doesn't provides much useful 
 
 ![Layout](https://github.com/jaynguyens/Dashboard/blob/master/.github/images/Layout.png)
 
-#### Single Dimension and Single Measure
+#### Extract Data - Dimensions and Measures
 
-#### Multi Dimensions and Single Measure
+Now that we have `layout` of an chart. We are going to make use of 3 pieces of information from `layout.qHyperCube`: `qDimensionInfo`, `qMeasureInfo`,and `qDataPages[0].qMatrix`. Create another hooks called `useGetDataFromLayout.js`.
 
-#### Single Dimension and Multi Measures
+```javascript
+import { useState, useEffect } from "react";
+import extractData from "../helper/extractData";
+
+// the parameter object contains the model and layout of a chart from qlik
+// extract the data into a single format for d3 using extractData function
+
+const useGetDataFromLayout = object => {
+   const [data, setData] = useState();
+
+   useEffect(() => {
+      object &&
+         (async () => {
+            const { layout } = await object;
+            const { qDimensionInfo, qMeasureInfo } = await layout.qHyperCube;
+            const qMatrix = await layout.qHyperCube.qDataPages[0].qMatrix;
+            const data = await extractData(
+               qMatrix,
+               qDimensionInfo,
+               qMeasureInfo
+            );
+            setData(data);
+         })();
+   }, [object]);
+
+   return data;
+};
+export default useGetDataFromLayout;
+```
+
+With `qMtrix`, `qDimensionInfo`, and `qMeasureInfo` we can extract into a more readable form. The `extractData` function returns an array with `dimensions` and `measures` contains the title and value.
+
+```javascript
+const extractData = async (qMatrix, qDimensionInfo, qMeasureInfo) => {
+   return await qMatrix.map(x => ({
+      dimensions: x.slice(0, qDimensionInfo.length).map((d, i) => ({
+         label: qDimensionInfo[i].qFallbackTitle,
+         value: d.qText,
+         qElemNumber: d.qElemNumber
+      })),
+      measures: x.slice(qDimensionInfo.length).map((d, i) => ({
+         label: qMeasureInfo[i].qFallbackTitle,
+         value: d.qNum,
+         qElemNumber: d.qElemNumber
+      }))
+   }));
+};
+
+export default extractData;
+```
+
+![Dataset](https://github.com/jaynguyens/Dashboard/blob/master/.github/images/Dataset.png)
 
 #### Data
 
