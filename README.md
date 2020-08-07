@@ -358,13 +358,44 @@ const Chart = styled.div`
 
 Let's create a folder called `hooks` inside of `src` folder to contains our custom hooks.
 
-In order to extract the data from qlik, we need to get the `objectId` of the chart that we need to extract from. In order to do that, on your qlik server (localhost:4848), on the chart of the app that we specified in our `.env` file - you can right click on the chart and select `Embed Chart`.
+In order to extract the data from qlik, we need to get the `objectId` of the chart that we need to extract from. On qlik server (localhost:4848), on the chart of the app that we specified in our `.env` file - you can right click on the chart and select `Embed Chart`.
 
 ![Get ObjectId From Qlik](https://github.com/jaynguyens/Dashboard/blob/master/.github/images/2020-08-07%2009.07.39.gif)
 
-`useGetModelLayout.js`
+Let's create a file called `useGetModelLayout.js` in `src/hooks/` folder, this is our hooks to get the `model` and `layout` from qlik object.
 
-Let's create a file called `useGetModelLayout.js` in `src/hooks/` folder.
+```javascript
+import { useState, useEffect, useContext } from "react";
+import { AppContext } from "../enigma/AppProvider";
+
+const useGetModelLayout = objectId => {
+   const [data, setData] = useState();
+   const app = useContext(AppContext);
+
+   useEffect(() => {
+      (async function() {
+         const model = await app.getObject(objectId);
+         const layout = await model.getLayout();
+         setData({ model, layout });
+      })();
+   }, [app, objectId]);
+   return data;
+};
+
+export default useGetModelLayout;
+```
+
+We import the `AppContext` which contains all the information about our Qlik App. When we call `app.getObject(objectId)` it returns an object data.
+
+![Model](https://github.com/jaynguyens/Dashboard/blob/master/.github/images/ObjectData.png)
+
+Without going in-depth or a specific case, `model` doesn't provides much useful information. However, `model` does provides us with a list of methods that we can call and extract data from the it - the full lists of methods are available under the `<prototype>` key.
+
+![List Of Model's Methods](https://github.com/jaynguyens/Dashboard/blob/master/.github/images/ListOfModelMethods.gif)
+
+`model.getLayout()` will return the layout that includes useful information about our chart, particularly in the `qHyperCube` key.
+
+![Layout](https://github.com/jaynguyens/Dashboard/blob/master/.github/images/Layout.png)
 
 #### Single Dimension and Single Measure
 
