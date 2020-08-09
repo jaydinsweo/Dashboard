@@ -456,6 +456,126 @@ export default extractData;
 
 #### Data
 
+However for table, we can't use `useGetModelLayout` function because:
+
+-  qMatrix is empty
+-  app.GetObject
+
+We need to use a different `app` method. The one I'm going to use is `app.createSessionObject(definition)` where we pass a definition object instead of an object id. The definition object consists of:
+
+-  `qInfo` - description of the chart
+-  `qHyperCubeDef` - contains `qDef` for dimensions and measures
+-  `qInitialDataFetch` - the shape of our data
+
+```javascript
+const PreIncomeClaimCosts = {
+   qInfo: {
+      qType: "stackbarchart"
+   },
+   qHyperCubeDef: {
+      qDimensions: [
+         {
+            qDef: {
+               qFieldDefs: ["Customer Name"]
+            }
+         },
+         {
+            qDef: {
+               qFieldDefs: ["Vehicle Rating Group"]
+            }
+         }
+      ],
+      qMeasures: [
+         {
+            qDef: {
+               qDef: "Count([Policy Id])",
+               qLabel: "Count of Policies"
+            }
+         },
+         {
+            qDef: {
+               qDef: "Sum([Total Claim Cost])/Sum([Annual Premium])",
+               qLabel: "Loss Ratio"
+            }
+         },
+         {
+            qDef: {
+               qDef: "Avg([Annual Premium])",
+               qLabel: "Average Annual Premium"
+            }
+         },
+         {
+            qDef: {
+               qDef: "Avg([Total Claim Cost])",
+               qLabel: "Average Claim Costs"
+            }
+         },
+         {
+            qDef: {
+               qDef: "Max([Total Claim Cost])",
+               qLabel: "Largest Claim"
+            }
+         },
+         {
+            qDef: {
+               qDef: "Min([Total Claim Cost])",
+               qLabel: "Smallest Claim"
+            }
+         }
+      ],
+      qAlwaysFullyExpanded: true,
+      qInitialDataFetch: [
+         {
+            qTop: 0,
+            qLeft: 0,
+            qWidth: 8,
+            qHeight: 100
+         }
+      ]
+   }
+};
+
+export default PreIncomeClaimCosts;
+```
+
+As you can see, there are two ways to for define `qDef`:
+
+-  `qFieldDefs`
+-  `qDef`
+
+`qFieldDefs` is predefined `fields` - we can check it on our Qlik server.
+`qDef` is where we include the calculation of the field.
+
+Again, we want to use the same format as our previous hooks `useGetModelLayout` so we going to return the `{model, layout}`. The `layout` here is exactly the same as the `useGetModelLayout`.
+
+```javascript
+import { useState, useEffect, useContext } from "react";
+import { AppContext } from "../enigma/AppProvider";
+
+const useGetSessionObject = definition => {
+   const [data, setData] = useState();
+   const app = useContext(AppContext);
+
+   useEffect(() => {
+      (async () => {
+         const model = await app.createSessionObject(definition);
+         const layout = await model.getLayout();
+         setData({ model, layout });
+      })();
+   }, [app, definition]);
+   return data;
+};
+
+export default useGetSessionObject;
+```
+
+Here we can use our previous created function `useGetDataFromLayout` to extract the data for table.
+
+```javascript
+const table = useGetSessionObject(PreIncomeClaimCosts);
+const dataset = useGetDataFromLayout(table);
+```
+
 ### Chart
 
 Now we have the data in a form that we could work with.
