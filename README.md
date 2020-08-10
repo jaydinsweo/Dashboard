@@ -98,7 +98,7 @@ Delete unnecessary files in `/src` folder
 -  serviceWorker.js
 -  setupTest.js
 
-In our `index.css`, removes everything and replace with this [tailwind base.css](https://unpkg.com/tailwindcss@1.5.2/dist/base.css).
+In our `index.css`, removes everything and replace with this [tailwind base css](https://unpkg.com/tailwindcss@1.5.2/dist/base.css).
 It will make the style of our app consistent across different browser, you can have a read [here](https://tailwindcss.com/docs/preflight/#app).
 
 In our `index.js`
@@ -354,6 +354,8 @@ const Chart = styled.div`
    min-width: 270px;
 `;
 ```
+
+![Layout with Flexbox](https://github.com/jaynguyens/Dashboard/blob/master/.github/images/flex-layout.png)
 
 Now we can do a bit more styling to our layout.
 I'm using a new UI/UX trend - neomorphism. The color scheme is from [uxplanet.org](https://uxplanet.org/neumorphism-in-user-interface-tutorial-c353698ac5c0)
