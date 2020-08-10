@@ -65,12 +65,26 @@ yarn add d3 enigma.js styled-components resize-observer-polyfill
 
 #### Project Layout
 
-```bash
-├─
-├─
-├─
-├─
-|
+```
+. src/
+├─ components
+   ├─ barChart/
+   ├─ lineChart/
+   ├─ pieChart/
+   └─ tableData/
+├─ enigma
+   ├─ AppProvider.js
+   └─ configSession.js
+├─ helper
+   └─ extractData.js
+├─ hooks
+   ├─ useGetDataFromLayout.js
+   ├─ useGetModelLayout.js
+   ├─ useGetSessionObject.js
+   └─ useResizeObserer.js
+├─ App.js
+├─ index.js
+├─ index.css
 └─
 ```
 
@@ -581,6 +595,8 @@ const dataset = useGetDataFromLayout(table);
 Now we have the data in a form that we could work with.
 
 #### Line Chart
+
+Line chart is a multiple measure and single dimension e.g. we have different things measure on the same level.
 
 #### Pie Chart
 
