@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import useGetModelLayout from "./hooks/useGetModelLayout";
 import useGetSessionObject from "./hooks/useGetSessionObject";
-import useGetDataFromModel from "./hooks/useGetDataFromModel";
+import useGetDataFromLayout from "./hooks/useGetDataFromLayout";
 import LineChart from "./components/charts/lineChart";
 import PieChart from "./components/charts/pieChart";
 import BarChart from "./components/charts/barChart";
@@ -18,24 +18,14 @@ const App = () => {
    const table = useGetSessionObject(PreIncomeClaimCosts);
 
    // extract data from the layout/model
-   const lineDataset = useGetDataFromModel(line);
-   const pieDataset = useGetDataFromModel(pie);
-   const barDataset = useGetDataFromModel(bar);
-   const tableDataset = useGetDataFromModel(table);
+   const tableDataset = useGetDataFromLayout(table);
 
    return (
       <Layout>
-         <Chart className="line">
-            {lineDataset && <LineChart dataset={lineDataset} />}
-         </Chart>
-         <Chart className="pie">
-            {pieDataset && <PieChart dataset={pieDataset} />}
-         </Chart>
-         <Chart className="bar">
-            {barDataset && <BarChart dataset={barDataset} />}
-         </Chart>
+         <Chart className="line">{line && <LineChart app={line} />}</Chart>
+         <Chart className="pie">{pie && <PieChart app={pie} />}</Chart>
+         <Chart className="bar">{bar && <BarChart app={bar} />}</Chart>
          <Chart className="table">
-            {!tableDataset && <p> Loading ... </p>}
             {tableDataset && <TableData dataset={tableDataset} />}
          </Chart>
       </Layout>

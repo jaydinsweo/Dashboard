@@ -1,13 +1,31 @@
-import React, { useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import * as d3 from "d3";
 import useResizeObserver from "../../../hooks/useResizeObserver";
 import styled from "styled-components";
+import extractData from "../../../helper/extractData";
 
-const Chart = ({ dataset }) => {
+const Chart = ({ dataset, app: { model } }) => {
+   const [data, setData] = useState(dataset);
    const wrapperRef = useRef();
    const svgRef = useRef();
    const dimensions = useResizeObserver(wrapperRef);
 
+   const HandleClick = useCallback(
+      async d => {
+         await model.selectHyperCubeValues(
+            "/qHyperCubeDef",
+            0,
+            [d.data.dimensions[0].qElemNumber], //pass an array to get data points
+            false
+         );
+         const layout = await model.getLayout();
+         const { qDimensionInfo, qMeasureInfo } = await layout.qHyperCube;
+         const qMatrix = await layout.qHyperCube.qDataPages[0].qMatrix;
+         const data = await extractData(qMatrix, qDimensionInfo, qMeasureInfo);
+         setData(data);
+      },
+      [model]
+   );
    useEffect(() => {
       if (!dimensions) return;
       const svg = d3
@@ -26,7 +44,7 @@ const Chart = ({ dataset }) => {
 
       // ----------------------- draw chart
       svg.selectAll(".piechart")
-         .data(pie(dataset))
+         .data(pie(data))
          .join("path")
          .attr("class", "piechart")
          .attr(
@@ -62,10 +80,21 @@ const Chart = ({ dataset }) => {
          .on("mouseleave", () => {
             // d3.select(".innerCircle").attr("style", "opacity: 0");
             svg.select(".labels").attr("opacity", 0);
+         })
+         .on("click", async d => {
+            HandleClick(d);
          });
-   }, [dataset, dimensions]);
+   }, [data, dimensions, HandleClick]);
 
-   useEffect(() => {}, []);
+   useEffect(() => {
+      model.on("changed", async () => {
+         const layout = await model.getLayout();
+         const { qDimensionInfo, qMeasureInfo } = await layout.qHyperCube;
+         const qMatrix = await layout.qHyperCube.qDataPages[0].qMatrix;
+         const data = await extractData(qMatrix, qDimensionInfo, qMeasureInfo);
+         setData(data);
+      });
+   }, [model]);
 
    return (
       <Div ref={wrapperRef} style={{ height: "100%" }}>

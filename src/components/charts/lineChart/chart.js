@@ -1,25 +1,56 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import * as d3 from "d3";
 import useResizeObserver from "../../../hooks/useResizeObserver";
 import styled from "styled-components";
+import extractData from "../../../helper/extractData";
 
-//TODO:
-// button css doesn't work when clicked
-// passed the correct data when button clicked
-
-const Chart = ({ dataset }) => {
+const Chart = ({ dataset, app: { model } }) => {
+   const [data, setData] = useState(dataset);
    const svgRef = useRef();
    const wrapperRef = useRef();
    const dimensions = useResizeObserver(wrapperRef);
 
    useEffect(() => {
+      model.on("changed", async () => {
+         const layout = await model.getLayout();
+         const { qDimensionInfo, qMeasureInfo } = await layout.qHyperCube;
+         const qMatrix = await layout.qHyperCube.qDataPages[0].qMatrix;
+         const data = await extractData(qMatrix, qDimensionInfo, qMeasureInfo);
+         setData(data);
+      });
+   }, [model]);
+
+   const HandleClick = useCallback(
+      async d => {
+         console.log(d);
+         await model.selectHyperCubeValues(
+            "/qHyperCubeDef",
+            0,
+            [d.dimensions[0].qElemNumber], //pass an array to get data points
+            false
+         );
+         const layout = await model.getLayout();
+         const { qDimensionInfo, qMeasureInfo } = await layout.qHyperCube;
+         const qMatrix = await layout.qHyperCube.qDataPages[0].qMatrix;
+         const data = await extractData(qMatrix, qDimensionInfo, qMeasureInfo);
+         setData(data);
+      },
+      [model]
+   );
+
+   useEffect(() => {
       if (!dimensions) return;
 
       // separate data into gender
-      const maleTP = dataset.filter(d => d.dimensions[1].value === "M");
-      const femaleTP = dataset.filter(d => d.dimensions[1].value === "F");
-
+      const maleTP = data.filter(
+         d => d.dimensions[1].value === "M" && d.dimensions[0].value <= 100
+      );
+      const femaleTP = data.filter(
+         d => d.dimensions[1].value === "F" && d.dimensions[0].value <= 100
+      );
+      const allTP = maleTP.concat(femaleTP);
       //margin
+
       const margin = {
          top: 10,
          bottom: 70,
@@ -37,12 +68,12 @@ const Chart = ({ dataset }) => {
       const scale = {
          x: d3
             .scaleLinear()
-            .domain(d3.extent(dataset.map(d => d.dimensions[0].value)))
+            .domain(d3.extent(allTP.map(d => d.dimensions[0].value)))
             .range([margin.left, dimensions.width - margin.right]),
 
          y: d3
             .scaleLinear()
-            .domain(d3.extent(dataset.map(d => d.measures[0].value)))
+            .domain(d3.extent(allTP.map(d => d.measures[0].value)))
             .range([dimensions.height - margin.bottom, margin.top])
             .nice()
       };
@@ -178,7 +209,7 @@ const Chart = ({ dataset }) => {
          .attr("class", "male-area")
          .attr("d", areaFunction)
          .attr("fill", "url(#areaGradient)");
-   }, [dataset, dimensions]);
+   }, [data, dimensions]);
 
    // handling the dropdown box for the opacity of the line charts
    const handleClick = value => {
@@ -211,7 +242,6 @@ const Chart = ({ dataset }) => {
             <Button onClick={() => handleClick("male")}>Male</Button>
             <Button onClick={() => handleClick("female")}>Female</Button>
          </Header>
-
          <svg ref={svgRef}>
             <g className="x-axis" />
             <g className="y-axis" />
@@ -235,7 +265,7 @@ const Header = styled.div`
 const Button = styled.button`
    padding: 0 0.5rem;
    margin: 0.2rem 0.5rem 0;
-   box-shadow: -5px -5px 10px #fff, 5px 5px 10px #babecc;
+   box-shadow: -4px -4px 6px #fff, 4px 4px 6px #babecc;
    color: #61677c;
    transition: all 0.2s ease-in-out;
    cursor: pointer;

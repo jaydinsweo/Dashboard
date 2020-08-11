@@ -1,5 +1,5 @@
-const extractData = async (qMatrix, qDimensionInfo, qMeasureInfo) => {
-   const newData = await qMatrix.map(x => ({
+const extractData = async (qMatrix, qDimensionInfo, qMeasureInfo) =>
+   await qMatrix.map(x => ({
       qElemNumber: x[0].qElemNumber,
       dimensions: x.slice(0, qDimensionInfo.length).map((d, i) => ({
          label: qDimensionInfo[i].qFallbackTitle,
@@ -12,7 +12,5 @@ const extractData = async (qMatrix, qDimensionInfo, qMeasureInfo) => {
          qElemNumber: d.qElemNumber
       }))
    }));
-   return newData;
-};
 
 export default extractData;

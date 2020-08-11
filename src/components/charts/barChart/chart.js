@@ -1,13 +1,24 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import * as d3 from "d3";
 import useResizeObserver from "../../../hooks/useResizeObserver";
 import styled from "styled-components";
+import extractData from "../../../helper/extractData";
 
-const Chart = ({ dataset }) => {
+const Chart = ({ dataset, app: { model } }) => {
+   const [data, setData] = useState(dataset);
    const wrapperRef = useRef();
    const svgRef = useRef();
    const dimensions = useResizeObserver(wrapperRef);
 
+   useEffect(() => {
+      model.on("changed", async () => {
+         const layout = await model.getLayout();
+         const { qDimensionInfo, qMeasureInfo } = await layout.qHyperCube;
+         const qMatrix = await layout.qHyperCube.qDataPages[0].qMatrix;
+         const data = await extractData(qMatrix, qDimensionInfo, qMeasureInfo);
+         setData(data);
+      });
+   }, [model]);
    useEffect(() => {
       if (!dimensions) return;
       const margin = {
@@ -25,13 +36,13 @@ const Chart = ({ dataset }) => {
       const scale = {
          x: d3
             .scaleBand()
-            .domain(dataset.map(d => d.dimensions[0].value))
+            .domain(data.map(d => d.dimensions[0].value))
             .range([margin.left, dimensions.width - margin.right])
             .paddingInner(0.1),
 
          y: d3
             .scaleLinear()
-            .domain(d3.extent(dataset.map(d => d.measures[0].value)))
+            .domain(d3.extent(data.map(d => d.measures[0].value)))
             .range([dimensions.height - margin.bottom, margin.top])
             .nice()
       };
@@ -81,9 +92,9 @@ const Chart = ({ dataset }) => {
       // draw chart
 
       svg.selectAll(".group-barchart")
-         .data(dataset)
+         .data(data)
          .join("g")
-         .attr("class", "group-barchart")
+         .attr("class", d => `group-barchart ${d.dimensions[0].value}`)
          .attr(
             "transform",
             d => `translate(${scale.x(d.dimensions[0].value)}, 0)`
@@ -101,13 +112,20 @@ const Chart = ({ dataset }) => {
          )
          .attr("fill", d => color(d.key));
 
+      const onClick = d => {
+         svg.selectAll(".group-barchart").attr("opacity", 0.5);
+         svg.select(`.${d.dimensions[0].value}`).attr("opacity", 1);
+      };
+
+      svg.selectAll(".group-barchart").on("click", onClick);
+
       // -------------------------------------- label
 
       const gLegend = d3
          .select(wrapperRef.current)
          .select(".bar-legend")
          .selectAll(".legend")
-         .data(dataset[0].measures)
+         .data(data[0].measures)
          .join("g")
          .attr("class", "legend");
 
@@ -116,13 +134,12 @@ const Chart = ({ dataset }) => {
          .append("div")
          .attr("class", "circle")
          .attr("style", (_, i) => `background-color: ${colors[i]};`);
-   }, [dataset, dimensions]);
+   }, [data, dimensions]);
 
    return (
       <Div ref={wrapperRef}>
          <svg ref={svgRef}>
             <g className="x-axis" />
-            <g className="y-axis" />
          </svg>
          <Legends className="bar-legend" />
       </Div>

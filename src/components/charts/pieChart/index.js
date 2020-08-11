@@ -1,12 +1,10 @@
 import React from "react";
 import Chart from "./chart";
+import useGetDataFromLayout from "../../../hooks/useGetDataFromLayout";
 
-const PieChart = ({ dataset }) => {
-   return (
-      <>
-         <Chart dataset={dataset} />
-      </>
-   );
+const PieChart = ({ app }) => {
+   const pieDataset = useGetDataFromLayout(app);
+   return <>{pieDataset && <Chart dataset={pieDataset} app={app} />}</>;
 };
 
 export default PieChart;
