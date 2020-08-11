@@ -2,6 +2,8 @@
 Dashboard with Qlik Engine
 </p>
 
+![Dashboard](https://github.com/jaynguyens/Dashboard/blob/master/.github/images/dashboard.png)
+
 <!-- TABLE OF CONTENTS -->
 
 ## Table of Contents
