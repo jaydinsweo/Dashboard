@@ -21,10 +21,7 @@ Dashboard with Qlik Engine
       -  [Single Dimensions and Multi Measures](#multi-meas)
       -  [Data](#data)
    -  [5. Charts](#chart)
-      -  [Line Chart](#line-chart)
-      -  [Pie Chart](#pie-chart)
-      -  [Bar Chart](#bar-chart)
-      -  [Table](#table)
+   -  [6. Make Selection](#make-selection)
 
 ## Getting Started
 
@@ -84,8 +81,7 @@ yarn add d3 enigma.js styled-components resize-observer-polyfill
    └─ useResizeObserer.js
 ├─ App.js
 ├─ index.js
-├─ index.css
-└─
+└─ index.css
 ```
 
 #### Remove Unwanted Files
@@ -594,14 +590,112 @@ const dataset = useGetDataFromLayout(table);
 
 ### Chart
 
-Now we have the data in a form that we could work with.
+Now we have the data in a form that we could work with. For plotting the chart, be sure you understand ![the margin convention](https://observablehq.com/@d3/margin-convention).
 
-#### Line Chart
+The reason why we have a `<div ref={wrapperRef}>...</div>` around our `svg` is that the `useResizeObserver` only work for the `div` element.
 
-Line chart is a multiple measure and single dimension e.g. we have different things measure on the same level.
+In _almost_ every charts we need to have `scale` and `axis` because d3 need to know how many pixel it need to allocates to the each data points given the dimensions of the `svg` element and the `[min,max]` of the data points.
 
-#### Pie Chart
+Our chart would be incomplete without interactivity. D3 selection has a good reference on ![handling events](https://github.com/d3/d3-selection#handling-events) and also checkout ![Chapter 4 of D3 for Impatient by Philipp K. Janert](https://www.oreilly.com/library/view/d3-for-the/9781492046783/ch04.html). You can also checkout the MDN web docs on [event refernce](https://developer.mozilla.org/en-US/docs/Web/Events) for the full list of DOM Events.
 
-#### Bar Chart
+```javascript
+import React, { useEffect, useRef } from "react";
+import * as d3 from "d3";
+import useResizeObserver from "../../../hooks/useResizeObserver";
 
-#### Table
+const Chart = ({ dataset }) => {
+   const wrapperRef = useRef();
+   const svgRef = useRef();
+   const dimensions = useResizeObserver(wrapperRef);
+
+   useEffect(() => {
+      if (!dimensions) return;
+      const margin = {
+         top: 40,
+         bottom: 50,
+         left: 30,
+         right: 30
+      };
+      const svg = d3
+         .select(svgRef.current)
+         .attr("width", dimensions.width)
+         .attr("height", dimensions.height);
+
+      // ---------------------- scale
+      const scale = {};
+      // ----------------------- axis
+      const axis = {};
+
+      // --------------------- calling axis
+      // Plot the axes on the chart
+
+      svg.select(".x-axis").call(axis.x);
+      svg.select(".y-axis").call(axis.y);
+
+      // --------------------- generates svg shapes to visualise the data
+
+      const dataPoints = svg
+         .selectAll(".data-points")
+         .data(dataset)
+         .join("g")
+         .attr("class", "data-points");
+
+      // --------------------- events
+      const onClick = d => {};
+      const onMouseOver = d => {};
+      const onMouseLeave = d => {};
+
+      dataPoints
+         .on("click", onClick)
+         .on("mouseover", onMouseOver)
+         .on("mouseleave", onMouseLeave);
+   }, [dataset, dimensions]);
+
+   return (
+      <div ref={wrapperRef}>
+         <svg ref={svgRef}>
+            <g className="x-axis" />
+            <g className="y-axis" />
+         </svg>
+      </div>
+   );
+};
+
+export default Chart;
+```
+
+### Make Selection
+
+1. Decided what on the chart do you know to select
+2. Add event listener to that class
+3. Use `model.selectHyperCubeValues` to query the data
+4. `model.getLayout()` to get the new layout
+5. Extract data from layout and use it to update the chart
+
+Our initial code would look like this
+
+```javascript
+const onClick = async d => HandleClick(d);
+svg.select(".piechart").on("click", onClick);
+```
+
+We add an event listener `click` on each pieces of our pie chart. When a user clicks on a pie it will trigger `HandleClick` function.
+
+```javascript
+const HandleClick = useCallback(
+   async d => {
+      await model.selectHyperCubeValues(
+         "/qHyperCubeDef",
+         0,
+         [d.dimensions[0].qElemNumber], //pass an array to get data points
+         false
+      );
+      const layout = await model.getLayout();
+      const { qDimensionInfo, qMeasureInfo } = await layout.qHyperCube;
+      const qMatrix = await layout.qHyperCube.qDataPages[0].qMatrix;
+      const data = await extractData(qMatrix, qDimensionInfo, qMeasureInfo);
+      setData(data);
+   },
+   [model]
+);
+```

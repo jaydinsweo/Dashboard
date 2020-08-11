@@ -60,7 +60,6 @@ const Chart = ({ dataset, app: { model } }) => {
 
       svg.selectAll(".piechart")
          .on("mouseover", d => {
-            // d3.select(".innerCircle").attr("style", "opacity: 1");
             svg.select(".labels")
                .attr(
                   "transform",
