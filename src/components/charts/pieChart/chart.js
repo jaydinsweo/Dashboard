@@ -77,7 +77,6 @@ const Chart = ({ dataset, app: { model } }) => {
                .text(d.data.measures[0].value.toFixed(0));
          })
          .on("mouseleave", () => {
-            // d3.select(".innerCircle").attr("style", "opacity: 0");
             svg.select(".labels").attr("opacity", 0);
          })
          .on("click", async d => {

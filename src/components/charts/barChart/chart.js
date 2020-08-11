@@ -10,6 +10,8 @@ const Chart = ({ dataset, app: { model } }) => {
    const svgRef = useRef();
    const dimensions = useResizeObserver(wrapperRef);
 
+   // trigger when there is a data selected
+   // the model will trigger the async function when it changed
    useEffect(() => {
       model.on("changed", async () => {
          const layout = await model.getLayout();
@@ -19,6 +21,8 @@ const Chart = ({ dataset, app: { model } }) => {
          setData(data);
       });
    }, [model]);
+
+   // trigger after initial render
    useEffect(() => {
       if (!dimensions) return;
       const margin = {
@@ -112,12 +116,12 @@ const Chart = ({ dataset, app: { model } }) => {
          )
          .attr("fill", d => color(d.key));
 
-      const onClick = d => {
-         svg.selectAll(".group-barchart").attr("opacity", 0.5);
-         svg.select(`.${d.dimensions[0].value}`).attr("opacity", 1);
-      };
-
-      svg.selectAll(".group-barchart").on("click", onClick);
+      // -------------------------------------- event listeners
+      const onClick = d => {};
+      const onMouseOver = d => {};
+      svg.selectAll(".group-barchart")
+         .on("click", onClick)
+         .on("mouseover", onMouseOver);
 
       // -------------------------------------- label
 

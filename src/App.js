@@ -12,7 +12,7 @@ import PreIncomeClaimCosts from "./components/charts/tableData/def";
 const App = () => {
    // get model and layout from the objectId
    const line = useGetModelLayout("144f304f-ffad-4f73-9ae1-0019d925c347");
-   const pie = useGetModelLayout("JLTp");
+   const pie = useGetModelLayout("EvVKv");
    const bar = useGetModelLayout("TXDzs");
    // table is different - need to create an object base on a definition object
    const table = useGetSessionObject(PreIncomeClaimCosts);

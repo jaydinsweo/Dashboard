@@ -36,8 +36,9 @@ To run in local, following these steps.
 
 This section should list any major frameworks that you built your project using. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
 
--  [ReactJs](https://github.com/facebook/react)
+-  [React](https://github.com/facebook/react)
 -  [Enigma.js](https://github.com/qlik-oss/enigma.js)
+-  [d3](https://github.com/d3/d3)
 -  [Styled Components](https://github.com/styled-components/styled-components)
 -  [Resize Observer Polyfill](https://github.com/que-etc/resize-observer-polyfill)
 
