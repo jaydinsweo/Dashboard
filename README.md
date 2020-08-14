@@ -1,6 +1,6 @@
-<p align="center">
-## Dashboard with Qlik Engine
-</p>
+<h2 align="center">
+ Dashboard with Qlik Engine
+</h2>
 
 ![Dashboard](https://github.com/jaynguyens/Dashboard/blob/master/.github/images/dashboard.png)
 
