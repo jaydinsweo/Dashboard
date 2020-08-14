@@ -1,5 +1,5 @@
 <p align="center">
-Dashboard with Qlik Engine
+## Dashboard with Qlik Engine
 </p>
 
 ![Dashboard](https://github.com/jaynguyens/Dashboard/blob/master/.github/images/dashboard.png)
@@ -31,12 +31,14 @@ To run in local, following these steps.
 
 ### Prerequisites
 
--  Qlik Server running on desktop or on server.
--  Npm or yarn
+Make sure that you has Qlik running either on your pc or on the cloud.
+
+-  [ ] Qlik Server running on desktop or on server.
+-  [ ] Npm or yarn
 
 ### Built With
 
-This section should list any major frameworks that you built your project using. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
+Here is the list of all dependencies that we will work with in this project.
 
 -  [React](https://github.com/facebook/react)
 -  [Enigma.js](https://github.com/qlik-oss/enigma.js)
@@ -50,6 +52,8 @@ This section will details on how to set up our mashup.
 
 ### Initialise Project
 
+We can use CRA for a simple dashboard and install all required packages for our project.
+
 #### Installation
 
 ```yarn
@@ -60,24 +64,24 @@ yarn add d3 enigma.js styled-components resize-observer-polyfill
 
 -  `d3` is our main data visualisation tool
 -  `enigma.js` is the qlik library for communicate with Qlik Engine
--  `styled-components` css-in-js tool (optional)
+-  `styled-components` css-in-js styling
 -  `resize-obserer-polyfill` make our chart responsive
 
 #### Project Layout
 
 ```
 . src/
-├─ components
+├─ components                    // each chart has its own folder
    ├─ barChart/
    ├─ lineChart/
    ├─ pieChart/
    └─ tableData/
-├─ enigma
+├─ enigma                        // qlik wrapper
    ├─ AppProvider.js
-   └─ configSession.js
+   └─ configSession.js           // additional function to make our code cleaner
 ├─ helper
    └─ extractData.js
-├─ hooks
+├─ hooks                         // hook components to extract data from qlik
    ├─ useGetDataFromLayout.js
    ├─ useGetModelLayout.js
    ├─ useGetSessionObject.js
@@ -89,16 +93,16 @@ yarn add d3 enigma.js styled-components resize-observer-polyfill
 
 #### Remove Unwanted Files
 
-Delete unnecessary files in `/src` folder
+The CRA contains a lot of unnecessary files so we are going to delete those
 
--  App.css
--  App.test.js
--  logo.svg
--  serviceWorker.js
--  setupTest.js
+-  [ ] App.css
+-  [ ] App.test.js
+-  [ ] logo.svg
+-  [ ] serviceWorker.js
+-  [ ] setupTest.js
 
 In our `index.css`, removes everything and replace with this [tailwind base css](https://unpkg.com/tailwindcss@1.5.2/dist/base.css).
-It will make the style of our app consistent across different browser, you can have a read [here](https://tailwindcss.com/docs/preflight/#app).
+It will ensure the styling of our app consistent across different browser, you can have a read [here](https://tailwindcss.com/docs/preflight/#app).
 
 In our `index.js`
 
@@ -132,20 +136,20 @@ That is it!.
 
 ### Qlik Connection
 
-1. Create a folder `enigma` inside `/src`.
+To make a connection with Qlik, we need to do 2 things
 
-2. create a `configSession.js` file in the newly created folder
+1. [ ] Make a connection to qlik server
+2. [ ] Maintain the connection during the app
 
-What is the config do? The configSession is to
+First, we crete a folder `enigma` inside `/src` to keep our qlik-related files and create a `configSession.js` file in the newly created folder.
 
-The `configSession.js` allows us to open and close sessions of our project.
+The `configSession.js` allows us to establish a connection to qlik server.
 
 ```javascript
 import enigma from "enigma.js";
 import schema from "enigma.js/schemas/12.67.2.json";
 ```
 
-first we need to create a session. A session is ...
 To create a session we needs two things: a schema and a url to the qlik server.
 [READ THE DOC](https://github.com/qlik-oss/enigma.js/blob/master/docs/api.md#enigmacreateconfig)
 
